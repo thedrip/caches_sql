@@ -6,7 +6,7 @@ Caches_SQL is a simple plugin written by Jove Malcolm (drip@dripspeed.com). The 
 
 How it works
 ============
-There are two caching methods used in Caches_SQL. Individual records, and everything else. Individual records are cached with keys liek projectname/Model/id. Everything else is cached with keys like projectname/Model/last_time_changed/findconditions. This means cached queries never have to be expired, they just fall off the top of the stack.
+Caches_SQL overrides the ActiveRecord find and find_every methods. This means all calls to find and find_by_ will be cached. Calls to find_by_sql will not. There are two caching methods used in Caches_SQL. Individual records, and everything else. Individual records are cached with keys liek projectname/Model/id. Everything else is cached with keys like projectname/Model/last_time_changed/findconditions. This means cached queries never have to be expired, they just fall off the top of the stack.
 
 Example
 =======
@@ -64,7 +64,12 @@ Model.reset_change_index() sets the change_index() to current time. Keeps track 
 
 Model.cache_delete(id) for deleting individual cached records. Use this when you update or delete an individual model to prevent old data remaining in the cache
 
+Common errors
+=============
 
+Things you may see pop up, and what they mean
+
+"Cannot modify frozen hash". This means you're trying to change/delete a record that was pulled from cache. Remember for any record that going to be modified, you need to include :nocache in the find arguments!
 
 
 Copyright (c) 2009 [name of plugin creator], released under the MIT license
