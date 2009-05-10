@@ -1,0 +1,68 @@
+Caches_SQL
+=========
+
+Caches_SQL is a simple plugin written by Jove Malcolm (drip@dripspeed.com). The purpose of this plugin is to cache SQL queries to relieve load on the database server. 
+
+
+How it works
+============
+There are two caching methods used in Caches_SQL. Individual records, and everything else. Individual records are cached with keys liek projectname/Model/id. Everything else is cached with keys like projectname/Model/last_time_changed/findconditions. This means cached queries never have to be expired, they just fall off the top of the stack.
+
+Example
+=======
+
+It takes very little to get Caches_SQL up and running. You only need to add or modify a few small snippets of code!
+
+To enable memcached,
+
+for each of the enviroments where you wish to use Caches_SQL, add the line
+
+	config.cache = :mem_cache_store
+
+in your environments/environment.rb file
+
+In your model.rb file, add the line,
+
+	caches_sql
+
+In your model_controller.rb file,
+assuming a RESTful controller generated with the scaffold generator,
+
+In the create method:
+after the line if "@model.save", add the line
+
+	Model.reset_change_index
+
+In the update method:
+
+Change "@model = Model.find(params[:id])" to "@model = Model.find(params[:id], :nocache)"
+
+After the line "if @model.update_attributes(params[:user])", add the line
+
+	Model.cache_delete(params[:id])
+
+In the delete method:
+
+Change "@model = Model.find(params[:id])" to "@model = Model.find(params[:id], :nocache)"
+
+After the line if "@model.destroy", add the line
+
+	Model.cache_delete(params[:id])
+
+If you are not using a RESTful controller or did not use the scaffold generator, every call to @model.update_attributes(arg) or @model.delete(arg) should be immidiately followed by Model.delete(arg). All calls to Model.new(args) should be followed by Model.increment_cache_index. Also, any .find where you are going to be modifying the object, the find method should be called with the second argument being :nocache (ie Model.find(params[:id] becomes Model.find(paramas[:id], :nocache)). This is due to caching returning object values, but not object addresses.
+
+These changes to the controller will keep your app working as is, except will cache nearly all SQL queries. It also allows includes a method for tracking changes anywhere in a particular model.
+
+Public methods
+==============
+
+The following methods are added to the ActiveRecord class for a particular model, if you have included the line "caches_sql" in your model.rb file.
+
+Model.change_index() returns a string representation of the integer for the time at which the latest change was made ot any record of a model
+Model.reset_change_index() sets the change_index() to current time. Keeps track of changes for cache key generation
+Model.cache_delete(id) for deleting individual cached records. Use this when you update or delete an individual model to prevent old data remaining in the cache
+
+
+
+
+Copyright (c) 2009 [name of plugin creator], released under the MIT license
