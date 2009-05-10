@@ -1,7 +1,7 @@
 Caches_SQL
 =========
 
-Caches_SQL is a simple plugin written by Jove Malcolm (drip@dripspeed.com). The purpose of this plugin is to cache SQL queries to relieve load on the database server. 
+Caches_SQL is a simple plugin written by Jove Malcolm (drip@dripspeed.com). The purpose of this plugin is to cache SQL queries to relieve load on the database server. Caches_SQL is *NOT* meant to be the final and total caching solution for your application, but it's a quick solution that will reduce load on your db server. 
 
 
 How it works
