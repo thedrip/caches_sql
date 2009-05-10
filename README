@@ -59,7 +59,9 @@ Public methods
 The following methods are added to the ActiveRecord class for a particular model, if you have included the line "caches_sql" in your model.rb file.
 
 Model.change_index() returns a string representation of the integer for the time at which the latest change was made ot any record of a model
+
 Model.reset_change_index() sets the change_index() to current time. Keeps track of changes for cache key generation
+
 Model.cache_delete(id) for deleting individual cached records. Use this when you update or delete an individual model to prevent old data remaining in the cache
 
 
